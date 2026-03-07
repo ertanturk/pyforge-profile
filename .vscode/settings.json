@@ -22,7 +22,7 @@
 
   // ── Type checking (Mypy via Pylance) ────────────────────────────────────
   "python.analysis.typeCheckingMode": "strict",
-  "python.analysis.extraPaths": ["src"],
+  "python.analysis.extraPaths": ["src", "scripts"],
   "mypy-type-checker.preferDaemon": true,
 
   // ── Testing ─────────────────────────────────────────────────────────────

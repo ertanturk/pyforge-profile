@@ -1,0 +1,84 @@
+name: Publish Checks
+
+on:
+  workflow_run:
+    workflows: ["Package Checks"]
+    types: [completed]
+
+permissions:
+  contents: write  # required to push the version-bump commit back
+
+jobs:
+  # ──────────────────────────────────────────────
+  # Job 1 · Version & Build Validation
+  # ──────────────────────────────────────────────
+  publish-checks:
+    name: Version & Build Validation
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # Check out the branch that triggered this run so the version-bump
+          # commit is pushed back to the correct branch.
+          ref: ${{ github.event.workflow_run.head_branch }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install build & check tools
+        run: pip install build twine
+
+      # ── Version resolution ────────────────────────────────────────────────
+      # Algorithm (see scripts/resolve_version.py for full details):
+      #   1. Fetch latest version from PyPI JSON API.
+      #   2. Read local .version cache.
+      #   3. Select the higher of the two; fall back to 0.0.0 if both fail.
+      #   4. Increment patch → write to pyproject.toml + .version cache.
+      #   5. Export NEW_VERSION to GITHUB_ENV and GITHUB_OUTPUT.
+      - name: Resolve next version
+        run: python scripts/resolve_version.py
+
+      - name: Build package
+        run: python -m build
+
+      - name: Validate distribution
+        run: twine check dist/*
+
+      - name: Report build artifacts
+        run: |
+          echo "Built artifacts:"
+          ls -lh dist/
+
+      # Upload the built dist so publish.yml can reuse it directly without
+      # rebuilding, guaranteeing version consistency.
+      - name: Upload distribution artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 1
+
+      # Commit the updated pyproject.toml and .version cache back to the branch.
+      # [skip ci] prevents this commit from re-triggering the pipeline.
+      - name: Commit version bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add pyproject.toml .version
+          git diff --staged --quiet || git commit -m "chore: bump version to ${{ env.NEW_VERSION }} [skip ci]"
+          git push
+
+      # Create a git tag for the new version so publish.yml can be triggered.
+      # Tags are in the form v0.1.0 and used by PyPI for releases.
+      - name: Create version tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "v${{ env.NEW_VERSION }}" -m "Release version ${{ env.NEW_VERSION }}"
+          git push origin "v${{ env.NEW_VERSION }}"

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyforge-profile"
-version = "0.0.1"
+version = "0.0.0"
 description = "A lightweight Python profiling framework built from scratch for analyzing function calls, execution time, and memory usage with clear terminal output."
 readme = "README.md"
 requires-python = ">=3.12"

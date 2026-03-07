@@ -1,0 +1,32 @@
+name: Package Checks
+
+on:
+  workflow_run:
+    workflows: ["Code Checks"]
+    types: [completed]
+
+jobs:
+  # ──────────────────────────────────────────────
+  # Job 1 · Tests
+  # ──────────────────────────────────────────────
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install package and pytest
+        run: pip install pytest .
+
+      - name: Run tests
+        run: pytest tests/base_test.py -v
