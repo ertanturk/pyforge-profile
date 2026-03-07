@@ -1,0 +1,80 @@
+name: Code Checks
+
+on:
+  push:
+    branches: ["main", "develop"]
+  pull_request:
+    branches: ["main", "develop"]
+
+jobs:
+  # ──────────────────────────────────────────────
+  # Job 1 · Linting
+  # ──────────────────────────────────────────────
+  linting:
+    name: Linting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Ruff
+        run: pip install ruff
+
+      - name: Run Ruff (lint)
+        run: ruff check src
+
+      - name: Run Ruff (format check)
+        run: ruff format --check src
+
+  # ──────────────────────────────────────────────
+  # Job 1 · Reviewing code security
+  # ──────────────────────────────────────────────
+  code-security:
+    name: Reviewing code security
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Bandit
+        run: pip install bandit
+
+      - name: Run Bandit
+        run: bandit -c pyproject.toml -r src
+
+  # ──────────────────────────────────────────────
+  # Job 1 · Reviewing code quality
+  # ──────────────────────────────────────────────
+  code-quality:
+    name: Reviewing code quality
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install pylint mypy .
+
+      - name: Run Pylint
+        run: pylint src
+
+      - name: Run Mypy
+        run: mypy src
