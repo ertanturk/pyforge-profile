@@ -27,10 +27,10 @@ jobs:
         run: pip install ruff
 
       - name: Run Ruff (lint)
-        run: ruff check src
+        run: ruff check src/pyforge_profile
 
       - name: Run Ruff (format check)
-        run: ruff format --check src
+        run: ruff format --check src/pyforge_profile
 
   # ──────────────────────────────────────────────
   # Job 1 · Reviewing code security
@@ -52,7 +52,7 @@ jobs:
         run: pip install bandit
 
       - name: Run Bandit
-        run: bandit -c pyproject.toml -r src
+        run: bandit -c pyproject.toml -r src/pyforge_profile
 
   # ──────────────────────────────────────────────
   # Job 1 · Reviewing code quality
@@ -74,7 +74,7 @@ jobs:
         run: pip install pylint mypy .
 
       - name: Run Pylint
-        run: pylint src
+        run: pylint src/pyforge_profile
 
       - name: Run Mypy
-        run: mypy src
+        run: mypy src/pyforge_profile

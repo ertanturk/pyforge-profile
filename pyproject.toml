@@ -177,7 +177,7 @@ known-third-party = []
 # ----------------------
 
 [tool.bandit]
-targets = ["src"]
+targets = ["src/pyforge_profile"]
 exclude_dirs = [".venv", "dist", "build", "tests"]
 severity = "low"      # report issues of low severity and above
 confidence = "low"    # report issues of low confidence and above
