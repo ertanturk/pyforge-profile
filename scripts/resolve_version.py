@@ -37,6 +37,7 @@ PYPI_API_URL: str = f"https://pypi.org/pypi/{PACKAGE_NAME}/json"
 VERSION_CACHE: Path = Path(".version")
 PYPROJECT: Path = Path("pyproject.toml")
 SEMVER_PARTS: int = 3  # Semantic versioning requires major.minor.patch
+FALLBACK: str = "0.0.0"  # Default version when both PyPI and cache are unavailable
 # Matches the ``version = "x.y.z"`` line inside [project] while leaving every
 # other line untouched.  The pattern anchors to the start of a line (MULTILINE)
 # and captures the surrounding quotes so the substitution only replaces the
@@ -120,10 +121,8 @@ def _parse(v: str) -> tuple[int, int, int]:
 def select_base(pypi: str | None, cache: str | None) -> str:
     """Return the higher of the two version strings with full fallback handling."""
     if pypi is None and cache is None:
-        raise RuntimeError(
-            "Both PyPI and local .version cache are unavailable or invalid — "
-            "cannot resolve version. Publishing aborted."
-        )
+        print(f"[Version] both unavailable → using fallback {FALLBACK}")
+        return FALLBACK
 
     if pypi is None:
         print(f"[Version] PyPI unavailable → using cache {cache}")
