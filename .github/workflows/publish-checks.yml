@@ -38,7 +38,8 @@ jobs:
       # Algorithm (see scripts/resolve_version.py for full details):
       #   1. Fetch latest version from PyPI JSON API.
       #   2. Read local .version cache.
-      #   3. Select the higher of the two; fall back to 0.0.0 if both fail.
+      #   3. Select the higher valid semver of the two.
+      #      If both are unavailable/invalid, fail and stop publishing.
       #   4. Increment patch → write to pyproject.toml + .version cache.
       #   5. Export NEW_VERSION to GITHUB_ENV and GITHUB_OUTPUT.
       - name: Resolve next version
@@ -55,8 +56,7 @@ jobs:
           echo "Built artifacts:"
           ls -lh dist/
 
-      # Upload the built dist so publish.yml can reuse it directly without
-      # rebuilding, guaranteeing version consistency.
+      # Upload the built dist for auditing / debugging purposes.
       - name: Upload distribution artifacts
         uses: actions/upload-artifact@v4
         with:

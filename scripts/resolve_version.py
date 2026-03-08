@@ -3,9 +3,9 @@
 Versioning algorithm:
   1. Fetch the current published version from the PyPI JSON API.
   2. Read the local .version cache file (guard against PyPI being unreachable).
-  3. Select the *higher* of the two versions.
-     - If only one source is available, use that one.
-     - If both are unavailable, fall back to ``0.0.0``.
+  3. Select the *higher* valid semver of the two versions.
+     - If only one source is available and valid, use that one.
+     - If both are unavailable or invalid, fail with an error.
   4. Increment the patch segment to produce the next version.
   5. Write the new version to:
      - ``pyproject.toml``  — targeted line replacement that preserves all
@@ -36,7 +36,6 @@ PACKAGE_NAME: str = "pyforge-profile"
 PYPI_API_URL: str = f"https://pypi.org/pypi/{PACKAGE_NAME}/json"
 VERSION_CACHE: Path = Path(".version")
 PYPROJECT: Path = Path("pyproject.toml")
-FALLBACK: str = "0.0.0"
 SEMVER_PARTS: int = 3  # Semantic versioning requires major.minor.patch
 # Matches the ``version = "x.y.z"`` line inside [project] while leaving every
 # other line untouched.  The pattern anchors to the start of a line (MULTILINE)
@@ -80,9 +79,17 @@ def fetch_pypi_version() -> str | None:
             if not isinstance(version_value, str):
                 raise TypeError("Expected version to be a string in PyPI JSON response")
             version: str = version_value
+            _parse(version)
             print(f"[PyPI]  fetched version : {version}")
             return version
-    except (urllib.error.URLError, KeyError, json.JSONDecodeError, OSError) as exc:
+    except (
+        ValueError,
+        TypeError,
+        urllib.error.URLError,
+        KeyError,
+        json.JSONDecodeError,
+        OSError,
+    ) as exc:
         print(f"[PyPI]  fetch failed      : {exc}", file=sys.stderr)
         return None
 
@@ -92,6 +99,11 @@ def read_cache() -> str | None:
     if VERSION_CACHE.exists():
         text = VERSION_CACHE.read_text(encoding="utf-8").strip()
         if text:
+            try:
+                _parse(text)
+            except ValueError as exc:
+                print(f"[Cache] invalid version : {text} ({exc})", file=sys.stderr)
+                return None
             print(f"[Cache] version          : {text}")
             return text
     print("[Cache] no cache file found.")
@@ -108,27 +120,22 @@ def _parse(v: str) -> tuple[int, int, int]:
 def select_base(pypi: str | None, cache: str | None) -> str:
     """Return the higher of the two version strings with full fallback handling."""
     if pypi is None and cache is None:
-        print(f"[Version] both sources unavailable → fallback {FALLBACK}")
-        return FALLBACK
+        raise RuntimeError(
+            "Both PyPI and local .version cache are unavailable or invalid — "
+            "cannot resolve version. Publishing aborted."
+        )
 
     if pypi is None:
-        if not isinstance(cache, str):
-            raise ValueError("Cache must be a valid version string when PyPI is unavailable")
         print(f"[Version] PyPI unavailable → using cache {cache}")
-        return cache
+        return cache  # type: ignore[return-value]  # guaranteed str by caller
 
     if cache is None:
         print(f"[Version] no cache → using PyPI {pypi}")
         return pypi
 
-    try:
-        chosen = pypi if _parse(pypi) >= _parse(cache) else cache
-        print(f"[Version] selected         : {chosen}  (pypi={pypi}, cache={cache})")
-    except ValueError as exc:
-        print(f"[Version] parse error: {exc}; falling back to PyPI", file=sys.stderr)
-        return pypi
-    else:
-        return chosen
+    chosen = pypi if _parse(pypi) >= _parse(cache) else cache
+    print(f"[Version] selected         : {chosen}  (pypi={pypi}, cache={cache})")
+    return chosen
 
 
 def increment_patch(version: str) -> str:

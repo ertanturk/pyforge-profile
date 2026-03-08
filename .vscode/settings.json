@@ -30,7 +30,6 @@
   "python.testing.unittestEnabled": false,
 
   // ── Editor ──────────────────────────────────────────────────────────────
-  "editor.rulers": [100],
   "editor.tabSize": 4,
   "editor.insertSpaces": true,
   "editor.trimAutoWhitespace": true,
@@ -75,5 +74,6 @@
     "chat-editing-text-model:**/*.markdown": "default",
     "chat-editing-text-model:**/*.mdx": "default",
     "chat-editing-text-model:**/*.mdc": "default"
-  }
+  },
+  "python-envs.defaultEnvManager": "ms-python.python:venv"
 }
