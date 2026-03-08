@@ -6,6 +6,8 @@ include pyproject.toml
 # Include type stubs marker
 include src/pyforge_profile/py.typed
 
+# Include docs
+recursive-include docs *.md
 
 # Exclude development/test artifacts
 prune .github

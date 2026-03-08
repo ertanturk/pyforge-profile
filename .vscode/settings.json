@@ -73,7 +73,10 @@
     "chat-editing-text-model:**/*.md": "default",
     "chat-editing-text-model:**/*.markdown": "default",
     "chat-editing-text-model:**/*.mdx": "default",
-    "chat-editing-text-model:**/*.mdc": "default"
+    "chat-editing-text-model:**/*.mdc": "default",
+    "/home/ertan/pyforge-profile/src/pyforge_profile/collector.py": "default",
+    "src/pyforge_profile/collector.py": "default",
+    "**/src/pyforge_profile/collector.py": "default"
   },
   "python-envs.defaultEnvManager": "ms-python.python:venv"
 }
