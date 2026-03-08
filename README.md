@@ -209,8 +209,6 @@ Configuration
 Project Status
 --------------------------------------------------------------------------------
 
-Development Status: Alpha (0.0.0)
-
 This is a learning project created to understand profiling mechanics,
 subprocess management, and AST parsing in Python. It is stable enough for
 personal use and experimentation but is not intended for production
