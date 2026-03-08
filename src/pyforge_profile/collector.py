@@ -145,7 +145,7 @@ class FunctionAnalyzer:
         return False
 
 
-def profile[FuncType: Callable[..., Any]](func: FuncType) -> FuncType:
+def profile[F: Callable[..., Any]](func: F) -> F:
     """Decorator to profile a function and track its execution.
 
     This decorator:
