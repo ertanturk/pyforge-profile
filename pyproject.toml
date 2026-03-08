@@ -1,0 +1,200 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyforge-profile"
+version = "0.0.1"
+description = "A lightweight Python profiling framework built from scratch for analyzing function calls, execution time, and memory usage with clear terminal output."
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+license-files = ["LICENSE"]
+keywords = [
+    "profiling",
+    "lightweight",
+    "analyzing"
+]
+
+authors = [
+    { name = "Ertan Tunç Türk", email = "ertantuncturk61@gmail.com" },
+]
+
+maintainers = [
+
+    { name = "Ertan Tunç Türk", email = "ertantuncturk61@gmail.com" },
+]
+
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Testing",
+    "Topic :: System :: Benchmark",
+    "Typing :: Typed",
+]
+
+[project.urls]
+Homepage = "https://github.com/ertanturk/pyforge-profile"
+Repository = "https://github.com/ertanturk/pyforge-profile"
+Documentation = "https://github.com/ertanturk/pyforge-profile#readme"
+Issues = "https://github.com/ertanturk/pyforge-profile/issues"
+
+[project.scripts]
+pyforge-profile = "pyforge_profile.__main__:main"
+
+
+# ----------------------
+# Ruff Configuration
+# ----------------------
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+fix = true
+src = ["src"]
+exclude = [
+    ".git",
+    ".mypy_cache",
+    ".ruff_cache",
+    ".venv",
+    "__pycache__",
+    "dist",
+    "build",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # import sorting
+    "N",    # pep8 naming conventions
+    "UP",   # pyupgrade
+    "B",    # bugbear
+    "C4",   # comprehensions
+    "SIM",  # simplifications
+    "RUF",  # Ruff-specific rules
+    "PL",   # pylint subset
+    "ARG",  # unused arguments
+    "D",    # pydocstyle
+    "PT",   # pytest style
+    "TCH",  # type-checking imports
+    "PERF", # performance anti-patterns
+    "S",    # bandit security checks
+    "FBT",  # boolean trap
+    "TRY",  # exception handling best practices
+    "PTH",  # prefer pathlib over os.path
+    "LOG",  # logging best practices
+    "G",    # logging format strings
+]
+
+ignore = [
+    "D100",    # missing docstring in public module (we add them ourselves)
+    "D104",    # missing docstring in public package
+    "D203",    # no-blank-line-before-class (conflicts with D211)
+    "D213",    # multi-line-summary-second-line (conflicts with D212)
+    "PLR0913", # too many arguments
+    "TRY003",  # avoid long messages in raise — acceptable for user-facing errors
+    "TRY301",  # abstract raise to inner function — overly strict
+]
+
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = [
+    "S101",   # assert statements are fine in tests
+    "D",      # no docstrings required in tests
+    "FBT",    # boolean args are common in test parametrize
+    "PLR2004", # magic values are fine in test assertions
+    "ARG",    # fixtures often appear unused
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["pyforge_profile"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.pylint]
+max-args = 7
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
+
+# ----------------------
+# Pylint Configuration
+# ----------------------
+
+[tool.pylint.main]
+py-version = "3.12"
+jobs = 0
+load-plugins = []
+source-roots = ["src"]
+
+[tool.pylint."messages control"]
+disable = [
+    "C0114",  # missing-module-docstring
+    "C0115",  # missing-class-docstring
+    "C0116",  # missing-function-docstring
+    "R0902",  # too-many-instance-attributes
+    "R0903",  # too-few-public-methods
+    "R0801",  # duplicate-code
+    "R0913",  # too-many-arguments
+    "R0917",  # too-many-positional-arguments
+    "R0914",  # too-many-locals (reporter formatting functions)
+    "R1705",  # no-else-return (style preference)
+    "W0212",  # access to protected member (needed for testing)
+    "W0718",  # broad-exception-caught (intentional for framework error handling)
+    "E1136",  # unsubscriptable-object (false positive for Queue[T] on 3.12+)
+    "C0301",  # line-too-long (handled by ruff)
+]
+
+[tool.pylint.format]
+max-line-length = 100
+
+[tool.pylint.design]
+max-args = 7
+max-locals = 15
+max-returns = 6
+max-branches = 12
+max-statements = 50
+
+[tool.pylint.similarities]
+min-similarity-lines = 6
+ignore-comments = true
+ignore-docstrings = true
+ignore-imports = true
+
+[tool.pylint.imports]
+known-third-party = []
+
+# ----------------------
+# Bandit Configuration
+# ----------------------
+
+[tool.bandit]
+targets = ["src/pyforge_profile"]
+exclude_dirs = [".venv", "dist", "build", "tests"]
+severity = "low"      # report issues of low severity and above
+confidence = "low"    # report issues of low confidence and above
+skips = []            # add B-codes here to suppress false positives, e.g. ["B101"]
+
+# ----------------------
+# Mypy Configuration
+# ----------------------
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
