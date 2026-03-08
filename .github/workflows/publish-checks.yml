@@ -43,6 +43,7 @@ jobs:
       #   4. Increment patch → write to pyproject.toml + .version cache.
       #   5. Export NEW_VERSION to GITHUB_ENV and GITHUB_OUTPUT.
       - name: Resolve next version
+        id: resolve_version
         run: python scripts/resolve_version.py
 
       - name: Build package
@@ -71,7 +72,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add pyproject.toml .version
-          git diff --staged --quiet || git commit -m "chore: bump version to ${{ env.NEW_VERSION }} [skip ci]"
+          git diff --staged --quiet || git commit -m "chore: bump version to ${{ steps.resolve_version.outputs.NEW_VERSION }} [skip ci]"
           git push
 
       # Create a git tag for the new version so publish.yml can be triggered.
@@ -80,5 +81,5 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a "v${{ env.NEW_VERSION }}" -m "Release version ${{ env.NEW_VERSION }}"
-          git push origin "v${{ env.NEW_VERSION }}"
+          git tag -a "v${{ steps.resolve_version.outputs.NEW_VERSION }}" -m "Release version ${{ steps.resolve_version.outputs.NEW_VERSION }}"
+          git push origin "v${{ steps.resolve_version.outputs.NEW_VERSION }}"
