@@ -13,15 +13,15 @@ class Registry:
 
     _instance = None
 
-    def __new__(cls):
+    def __new__(cls) -> Registry:
         """Return the singleton instance of `Registry`."""
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the internal mapping on first construction."""
-        if not hasattr(self, '_registry'):
+        if not hasattr(self, "_registry"):
             self._registry: dict[str, FunctionProfile] = {}
 
     def _make_key(self, file_name: str, line_number: int, function_name: str) -> str:
