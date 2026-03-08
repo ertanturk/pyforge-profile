@@ -49,8 +49,7 @@ MANIFEST
 # ==================================================
 # Version Cache
 # ==================================================
-
-.version
+# NOTE: .version is tracked in git (workflow cache)
 
 # ==================================================
 # Coverage & Test Reports

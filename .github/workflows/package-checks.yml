@@ -5,6 +5,9 @@ on:
     workflows: ["Code Checks"]
     types: [completed]
 
+permissions:
+  contents: read
+
 jobs:
   # ──────────────────────────────────────────────
   # Job 1 · Tests
@@ -12,7 +15,7 @@ jobs:
   tests:
     name: Tests
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'success'
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Checkout code

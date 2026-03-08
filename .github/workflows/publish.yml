@@ -5,6 +5,9 @@ on:
     tags:
       - "v*.*.*"  # Semver-like tags: v0.1.0, v1.2.3, etc.
 
+permissions:
+  contents: read
+
 jobs:
   # ──────────────────────────────────────────────
   # Job 1 · Build & Publish
