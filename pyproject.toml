@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyforge-profile"
-version = "0.0.0"
+version = "0.0.1"
 description = "A lightweight Python profiling framework built from scratch for analyzing function calls, execution time, and memory usage with clear terminal output."
 readme = "README.md"
 requires-python = ">=3.12"
@@ -44,6 +44,9 @@ Homepage = "https://github.com/ertanturk/pyforge-profile"
 Repository = "https://github.com/ertanturk/pyforge-profile"
 Documentation = "https://github.com/ertanturk/pyforge-profile#readme"
 Issues = "https://github.com/ertanturk/pyforge-profile/issues"
+
+[project.scripts]
+pyforge-profile = "pyforge_profile.__main__:main"
 
 
 # ----------------------

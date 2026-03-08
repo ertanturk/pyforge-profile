@@ -22,7 +22,6 @@ class FunctionProfile:
         total_time: float = 0.0,
         self_time: float = 0.0,
         memory_usage: float = 0.0,
-        children: dict[int, FunctionProfile] | None = None,
     ):
         """Create a new `FunctionProfile` instance.
 
@@ -35,7 +34,6 @@ class FunctionProfile:
             total_time: Total execution time including children (seconds).
             self_time: Execution time excluding children (seconds).
             memory_usage: Memory used by this function (bytes or units).
-            children: Mapping of child profile IDs to `FunctionProfile` objects.
         """
         self.function = func
         self.name = function_name
@@ -45,4 +43,3 @@ class FunctionProfile:
         self.total_time = total_time
         self.self_time = self_time
         self.memory_usage = memory_usage
-        self.children = children if children is not None else {}
